@@ -56,6 +56,18 @@ function verifyuserPost(post) {
 }
 
 class postsControllers {
+  // Metodo para traer todas las publicaciones
+  async getAll() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Respondemos el usuario creado a la ruta
+        return resolve(posts);
+      } catch (error) {
+        return reject(error);
+      }
+    });
+  }
+
   // Metodo para crear publicaciones
   async add(post) {
     return new Promise(async (resolve, reject) => {
@@ -87,7 +99,7 @@ class postsControllers {
 
         // Agregamos a la base de datos y retornamos a la ruta
         posts.push(newPost);
-        return resolve(posts);
+        return resolve(newPost);
       } catch (error) {
         return reject(error);
       }
@@ -198,7 +210,10 @@ class postsControllers {
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id === id) {
             posts.splice(i, 1);
-            return resolve("Se eliminó la publicación")
+            return resolve({
+              mensaje: "Se eliminó la publicación",
+              posts: posts
+            })
           }
         }
       } catch (error) {

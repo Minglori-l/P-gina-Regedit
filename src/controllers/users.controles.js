@@ -37,6 +37,18 @@ function verifyUserDB(user) {
 }
 
 class usersControllers {
+  // Metodo para traer todos los usuarios
+  async getAll() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Respondemos el usuario creado a la ruta
+        return resolve(users);
+      } catch (error) {
+        return reject(error);
+      }
+    });
+  }
+
   // Metodo para registrar usuarios
   async register(user) {
     return new Promise(async (resolve, reject) => {
@@ -87,6 +99,7 @@ class usersControllers {
   async edit(user) {
     return new Promise(async (resolve, reject) => {
       try {
+        console.log(user)
         if (verifyData(user)) {
           return reject("Faltan propiedades dentro del body");
         }
@@ -128,7 +141,7 @@ class usersControllers {
     });
   }
 
-  // Metodo para registrar usuarios
+  // Metodo para ver la publicaciones del usuarios
   async posts(user) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -235,6 +248,49 @@ class usersControllers {
           }
 
           return resolve("El usuario " + user + " ha sido eliminado")
+        } catch (error) {
+          return reject(error);
+        }
+      });
+    }
+
+    // Metodo para Eliminar usuarios
+    async delete(user) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          // Verificamos si existe el usuario
+          if (verifyUserDB(user)) {
+            return reject("No existe el usuario");
+          }
+  
+          // Eliminamos todas las relaciones de amigos
+          for (let i = 0; i < friends.length; i++) {
+            if (friends[i].recive === user || friends[i].send === user) {
+              friends.splice(i, 1);
+              i = i - 1
+            }
+          }
+
+          // Eliminamos todas las publicaciones
+          for (let i = 0; i < posts.length; i++) {
+            if (posts[i].user === user) {
+              posts.splice(i, 1);
+              i = i - 1
+            }
+          }
+
+          // Eliminamos al usuario
+          for (let i = 0; i < users.length; i++) {
+            if (users[i].user === user) {
+              users.splice(i, 1);
+              i = i - 1
+            }
+          }
+
+          return resolve({
+            mensaje: "El usuario " + user + " ha sido eliminado",
+            users: users
+          })
         } catch (error) {
           return reject(error);
         }
